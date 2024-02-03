@@ -63,28 +63,17 @@ int main() {
         err_n_die(pam_strerror(handle, ret));
 
     // check user privileges
-    ret = pam_acct_mgmt(handle, 0);
-    if (ret != PAM_SUCCESS)
-        err_n_die(pam_strerror(handle, ret));
+    // ret = pam_acct_mgmt(handle, 0);
+    // if (ret != PAM_SUCCESS)
+    //     err_n_die(pam_strerror(handle, ret));
 
     // user is valid. greet, and offer password change.
     pam_get_item(handle, PAM_USER, (const void**)&username);
     printf("Welcome %s!\n", username);
 
-    fflush(stdin);
-
-    // printf("Are you willing to change your password? [y/n]: ");
-    // char input_change_passw;
-    // scanf("%c", &input_change_passw);
-
-    // if (input_change_passw != 'y') {
-    //     printf("Ok.. bye!\n");
-    //     return 0;
-    // }
-
-    ret = pam_chauthtok(handle, 0); // 0 - force password change, even for valid tokens
-    if (ret != PAM_SUCCESS)
-        err_n_die(pam_strerror(handle, ret)); 
+    // ret = pam_chauthtok(handle, 0); // 0 - force password change, even for valid tokens
+    // if (ret != PAM_SUCCESS)
+    //     err_n_die(pam_strerror(handle, ret)); 
 
     pam_end(handle, ret);
     return 0;
