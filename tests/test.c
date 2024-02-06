@@ -63,9 +63,9 @@ int main() {
         err_n_die(pam_strerror(handle, ret));
 
     // check user privileges
-    // ret = pam_acct_mgmt(handle, 0);
-    // if (ret != PAM_SUCCESS)
-    //     err_n_die(pam_strerror(handle, ret));
+    ret = pam_acct_mgmt(handle, 0);
+    if (ret != PAM_SUCCESS)
+        err_n_die(pam_strerror(handle, ret));
 
     // user is valid. greet, and offer password change.
     pam_get_item(handle, PAM_USER, (const void**)&username);

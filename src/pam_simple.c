@@ -5,9 +5,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "./utils/argv_parser.h"
 
 #define LOG_GET_USER "[pam_simple] Username: "
 #define LOG_GET_TOKEN "[pam_simple] Password: "
+#define FILE_LINE_SIZE 50
 
 
 void log_err(const char *msg) {
@@ -49,4 +51,30 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
     }
 
     return PAM_PERM_DENIED;
+}
+
+bool is_user_banned(char *username, int argc, const char **argv) {
+    struct acct_argv *parsed_argv = parse_acct_argv(argc, argv);
+    FILE *perms_file = fopen(parsed_argv->permissions_filename, "r");
+
+    if (fptr == NULL) {
+        log_err("could not open permissions file");
+        return false;
+    }
+
+    char *curr_line = NULL;
+    while (fscanf(perms_file, "%s", curr_line) > 0) {
+        if (strcmp(curr_line, username) == 0)
+            return true;
+    }
+
+    fclose(fptr);
+    return false;
+}
+
+PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *handle, int flags, int argc, const char **argv) {
+    const char *username;
+    pam_get_item(handle, PAM_USER, (const void **)&username);
+    
+    return (is_user_banned(username, argc, argv)) ? PAM_PERM_DENIED : PAM_SUCCESS;
 }
