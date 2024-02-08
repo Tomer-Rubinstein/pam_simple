@@ -4,7 +4,8 @@ A simple [PAM](https://en.wikipedia.org/wiki/Linux_PAM) module to authenticate u
 via ``/etc/shadow``.
 The module also supports user banning.
 
-**TODO List**
+### TODO List
+
 Auth Management Group:
 - [ ] implement parser for ``/etc/shadow`` to extract information such as: username, hash algo, salt, etc.
 - [ ] implement SHA-512, SHA-256 and MD5 hash functions (preferably use cryptlib) w.r.t salt
