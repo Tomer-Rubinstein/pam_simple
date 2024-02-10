@@ -7,14 +7,9 @@ The module also supports user banning.
 ### TODO List
 
 Auth Management Group:
-- [ ] implement parser for ``/etc/shadow`` to extract information such as: username, hash algo, salt, etc.
-- [ ] implement SHA-512, SHA-256 and MD5 hash functions (preferably use cryptlib) w.r.t salt
-- [ ] implement the PAM function for credentials validation (using the above necessities)
-
-
-NOTE: I'm not using ``<shadow.h>`` to read ``/etc/shadow`` since the ``spwd`` structure does not contain
-some information like the hashing algorithm and the salt used. Thus implementing my own parser.
-
+- [ ] implement parser for ``/etc/shadow`` to extract information such as: username, hash algo, salt, etc. (using ``<shadow.h>``)
+- [ ] implement SHA-512 w.r.t salt
+- [ ] implement ``pam_sm_authenticate`` (using the above necessities)
 
 Account Management Group:
 - [ ] get path to banned users file from PAM config file and check for existence of ``username`` (hence banned)
