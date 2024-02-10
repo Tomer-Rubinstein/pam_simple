@@ -14,8 +14,7 @@
 #define FILE_LINE_SIZE 50
 
 
-bool auth_user(const char *username, const char *password) {
-    get_shadow_entry(username);
+bool auth_user(struct spwd* shadow_entry const char* password) {
 
     return true;
 }
@@ -31,6 +30,9 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
         return PAM_PERM_DENIED;
     }
 
+    // read shadow file early to drop privileges ASAP
+    struct spwd* shadow_entry = get_shadow_entry(username);
+
     ret = pam_get_authtok(handle, PAM_AUTHTOK, &password, LOG_GET_TOKEN);
     if (ret != PAM_SUCCESS) {
         log_err("could not get token from application");
@@ -45,7 +47,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
         }
     }
 
-    if (auth_user(username, password)) {
+    if (auth_user(shadow_entry, password)) {
         printf("[pam_simple] login ok, hello %s!\n", username);
         return PAM_SUCCESS;
     }

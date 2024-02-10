@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <grp.h>
 #include <stdbool.h>
+#include <shadow.h>
 
 #include "shadowfile_parser.h"
 #include "error_handling.h"
@@ -56,23 +57,12 @@ bool permanent_privileges_drop() {
     return true;
 }
 
-struct shadowfile_entry* get_shadow_entry(const char* username) {
-    struct shadowfile_entry* entry = (struct shadowfile_entry*) calloc(sizeof(struct shadowfile_entry*), 1);
-    FILE* fptr = fopen(SHADOWFILE_PATH, "r");
-
-    if (fptr == NULL) {
-        log_err("could not open shadow file");
-        return NULL;
-    }
-
-    char currline[SHADOWFILE_MAX_LINE+1] = { 0 };
-    while(fgets(currline, SHADOWFILE_MAX_LINE, fptr)) {
-        printf("%s", currline);
-    }
+struct spwd* get_shadow_entry(const char* username) {
+    struct spwd* entry = getspnam(username);
+    if (!entry)
+        log_err("could not access shadow file\n");
 
     permanent_privileges_drop();
 
-
-    fclose(fptr);
     return entry;
-};
+}

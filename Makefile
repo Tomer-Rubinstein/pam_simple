@@ -2,7 +2,7 @@
 utils = src/utils/argv_parser.o src/utils/shadowfile_parser.o src/utils/error_handling.o
 
 $(utils): %.o: %.c
-	gcc $< -c -Wall -Werror -fpic -o $@
+	gcc $<  -lshadow -c -Wall -Werror -fpic -o $@
 
 pam_simple.o: src/pam_simple.c
 	gcc src/pam_simple.c -lpam -lpam_misc -c -Wall -Werror -fpic -o pam_simple.o
