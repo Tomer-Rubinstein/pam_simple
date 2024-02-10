@@ -6,18 +6,18 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "./utils/argv_parser.h"
+#include "./utils/shadowfile_parser.h"
+#include "./utils/error_handling.h"
 
 #define LOG_GET_USER "[pam_simple] Username: "
 #define LOG_GET_TOKEN "[pam_simple] Password: "
 #define FILE_LINE_SIZE 50
 
 
-void log_err(const char *msg) {
-    fprintf(stderr, "[ERROR] %s\n", msg);
-}
-
 bool auth_user(const char *username, const char *password) {
-    return (strcmp(username, "admin") == 0 && strcmp(password, "admin") == 0);
+    get_shadow_entry(username);
+
+    return true;
 }
 
 PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, const char **argv) {
@@ -53,22 +53,22 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
     return PAM_PERM_DENIED;
 }
 
-bool is_user_banned(char *username, int argc, const char **argv) {
+bool is_user_banned(const char *username, int argc, const char **argv) {
     struct acct_argv *parsed_argv = parse_acct_argv(argc, argv);
-    FILE *perms_file = fopen(parsed_argv->permissions_filename, "r");
+    FILE *permsfile = fopen(parsed_argv->permissions_filename, "r");
 
-    if (fptr == NULL) {
+    if (permsfile == NULL) {
         log_err("could not open permissions file");
         return false;
     }
 
     char *curr_line = NULL;
-    while (fscanf(perms_file, "%s", curr_line) > 0) {
+    while (fscanf(permsfile, "%s", curr_line) > 0) {
         if (strcmp(curr_line, username) == 0)
             return true;
     }
 
-    fclose(fptr);
+    fclose(permsfile);
     return false;
 }
 
@@ -77,4 +77,8 @@ PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *handle, int flags, int argc, const
     pam_get_item(handle, PAM_USER, (const void **)&username);
     
     return (is_user_banned(username, argc, argv)) ? PAM_PERM_DENIED : PAM_SUCCESS;
+}
+
+PAM_EXTERN int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc, const char **argv) {
+    return PAM_SUCCESS;
 }

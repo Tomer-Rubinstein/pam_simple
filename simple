@@ -1,5 +1,6 @@
-# this PAM configuration file should be placed at /etc/pam.d
-# note that pam_simple.so must also be placed at /usr/lib/x86_64-linux-gnu/security (in my system, at least ¯\_(ツ)_/¯)
+# /etc/pam.d/simple
+
+# NOTE: pam_simple.so must also be placed at /usr/lib/x86_64-linux-gnu/security (in my system, at least ¯\_(ツ)_/¯)
 
 auth required pam_simple.so
 account required pam_simple.so permissions=/etc/simple_perms

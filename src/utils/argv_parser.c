@@ -1,4 +1,4 @@
-#include "cli_parser.h"
+#include "argv_parser.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,10 +20,9 @@ struct acct_argv* parse_acct_argv(int argc, const char **argv) {
     struct acct_argv *parsed_argv = (struct acct_argv *) malloc(sizeof(struct acct_argv));
 
     char *curr_arg;
-    char *token;
     char *rest = NULL;
     for (int i=0; i < argc; i++) {
-        curr_arg = argv[i];
+        curr_arg = (char*) argv[i];
 
         char *key = get_argv_key(curr_arg, &rest);
         char *value = get_argv_value(&rest);

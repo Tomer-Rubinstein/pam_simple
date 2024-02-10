@@ -1,3 +1,5 @@
+#pragma once
+
 struct acct_argv {
     char *permissions_filename;
 };

@@ -18,7 +18,7 @@ int conversation(int num_msg, const struct pam_message **msgs, struct pam_respon
         responses_arr[i].resp_retcode = 0; // should always be 0
 
         // message of current request from PAM module
-        const char *msg = msgs[i]->msg; 
+        const char *msg = msgs[i]->msg;
         printf("%s\n", msg);
 
         if (msgs[i]->msg_style == PAM_PROMPT_ECHO_ON || msgs[i]->msg_style == PAM_PROMPT_ECHO_OFF)
