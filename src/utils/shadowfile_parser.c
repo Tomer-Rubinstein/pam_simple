@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -12,6 +13,7 @@
 
 #define SHADOWFILE_PATH "/etc/shadow"
 #define SHADOWFILE_MAX_LINE 200
+#define SHADOW_PASSW_DELIMITER "$"
 
 bool permanent_privileges_drop() {
     /* 
@@ -57,12 +59,57 @@ bool permanent_privileges_drop() {
     return true;
 }
 
-struct spwd* get_shadow_entry(const char* username) {
-    struct spwd* entry = getspnam(username);
-    if (!entry)
-        log_err("could not access shadow file\n");
+bool parse_shadow_password(struct shadowfile_entry* entry, char* password) {
+    /*
+    * according to "Understanding /etc/shadow file format on Linux" (see README),
+    * the format of the password field is as follows ($ - delimiter):
+    *   $HASH_ALGO$SALT$HASHED_PASSWORD
+    * where HASH_ALGO can be $1 for MD5, $5 for SHA-256 and $6 for SHA-512
+    */
 
+    char *hash_algo = strtok(password, SHADOW_PASSW_DELIMITER);
+    char *salt = strtok(NULL, SHADOW_PASSW_DELIMITER);
+    char *hashed_passw = strtok(NULL, SHADOW_PASSW_DELIMITER);
+    if (!hash_algo || !salt || !hashed_passw)
+        return false;
+
+    entry->algo = -1;
+    entry->salt = salt;
+    entry->passw_hash = hashed_passw;
+
+    if (strcmp(hash_algo, "1") == 0)
+        entry->algo = MD5;
+    if (strcmp(hash_algo, "5") == 0)
+        entry->algo = SHA256;
+    if (strcmp(hash_algo, "6") == 0)
+        entry->algo = SHA512;
+    
+    bool found_algo = (entry->algo != -1);
+    return found_algo;
+}
+
+struct shadowfile_entry* get_shadow_entry(const char* username) {
+    struct spwd* spwd_entry = getspnam(username); // read from shadow file
     permanent_privileges_drop();
+
+    if (!spwd_entry) {
+        log_err("could not access shadow file or no entry for user");
+        return NULL;
+    }
+
+    struct shadowfile_entry* entry = (struct shadowfile_entry*) calloc(sizeof(struct shadowfile_entry), 1);
+    entry->username = spwd_entry->sp_namp;
+    entry->expiration_date = spwd_entry->sp_expire;
+
+    // parse salt, algo type and hash(password, salt) from spwd_entry->sp_pwdp (hashed passsword field)
+    if(!parse_shadow_password(entry, spwd_entry->sp_pwdp)) {
+        log_err("could not parse shadow password");
+        return NULL;
+    }
+
+    printf("found algo: %d\n", entry->algo);
+    printf("found salt: %s\n", entry->salt);
+    printf("found hashed password: %s\n", entry->passw_hash);
 
     return entry;
 }

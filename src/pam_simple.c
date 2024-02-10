@@ -11,10 +11,9 @@
 
 #define LOG_GET_USER "[pam_simple] Username: "
 #define LOG_GET_TOKEN "[pam_simple] Password: "
-#define FILE_LINE_SIZE 50
 
 
-bool auth_user(struct spwd* shadow_entry const char* password) {
+bool auth_user(struct shadowfile_entry* shadow_entry, const char* password) {
 
     return true;
 }
@@ -30,8 +29,12 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
         return PAM_PERM_DENIED;
     }
 
+
     // read shadow file early to drop privileges ASAP
-    struct spwd* shadow_entry = get_shadow_entry(username);
+    struct shadowfile_entry* shadow_entry = get_shadow_entry(username);
+    if (shadow_entry == NULL)
+        return PAM_PERM_DENIED;
+
 
     ret = pam_get_authtok(handle, PAM_AUTHTOK, &password, LOG_GET_TOKEN);
     if (ret != PAM_SUCCESS) {
