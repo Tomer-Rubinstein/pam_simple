@@ -2,3 +2,4 @@
 *.so
 pam_simple
 test
+/build
