@@ -2,9 +2,9 @@
 #include <shadow.h>
 
 typedef enum HASH_ALGO {
-    SHA512,
-    SHA256,
-    MD5
+    ALGOTYPE_SHA512,
+    ALGOTYPE_SHA256,
+    ALGOTYPE_MD5
 } HASH_ALGO;
 
 struct shadowfile_entry {

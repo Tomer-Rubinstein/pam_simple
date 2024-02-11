@@ -78,11 +78,11 @@ bool parse_shadow_password(struct shadowfile_entry* entry, char* password) {
     entry->passw_hash = hashed_passw;
 
     if (strcmp(hash_algo, "1") == 0)
-        entry->algo = MD5;
+        entry->algo = ALGOTYPE_MD5;
     if (strcmp(hash_algo, "5") == 0)
-        entry->algo = SHA256;
+        entry->algo = ALGOTYPE_SHA256;
     if (strcmp(hash_algo, "6") == 0)
-        entry->algo = SHA512;
+        entry->algo = ALGOTYPE_SHA512;
     
     bool found_algo = (entry->algo != -1);
     return found_algo;
