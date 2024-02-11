@@ -9,7 +9,7 @@
 #include <shadow.h>
 
 #include "shadowfile_parser.h"
-#include "error_handling.h"
+#include "../utils/error_handling.h"
 
 #define SHADOWFILE_PATH "/etc/shadow"
 #define SHADOWFILE_MAX_LINE 200

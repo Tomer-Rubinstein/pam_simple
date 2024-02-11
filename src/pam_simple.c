@@ -5,18 +5,14 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include "./utils/argv_parser.h"
-#include "./utils/shadowfile_parser.h"
-#include "./utils/error_handling.h"
+#include "parsers/argv_parser.h"
+#include "parsers/shadowfile_parser.h"
+#include "utils/error_handling.h"
+#include "auth.h"
 
 #define LOG_GET_USER "[pam_simple] Username: "
 #define LOG_GET_TOKEN "[pam_simple] Password: "
 
-
-bool auth_user(struct shadowfile_entry* shadow_entry, const char* password) {
-
-    return true;
-}
 
 PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, const char **argv) {
     int ret;

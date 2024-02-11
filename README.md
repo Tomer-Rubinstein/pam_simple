@@ -7,7 +7,7 @@ The module also supports user banning.
 ### TODO List
 
 Auth Management Group:
-- [ ] implement parser for ``/etc/shadow`` to extract information such as: username, hash algo, salt, etc. (using ``<shadow.h>``)
+- [x] implement parser for ``/etc/shadow`` to extract information such as: username, hash algo, salt, etc. (using ``<shadow.h>``)
 - [ ] implement SHA-512 w.r.t salt
 - [ ] implement ``pam_sm_authenticate`` (using the above necessities)
 
