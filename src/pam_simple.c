@@ -8,7 +8,9 @@
 #include "parsers/argv_parser.h"
 #include "parsers/shadowfile_parser.h"
 #include "utils/error_handling.h"
+
 #include "auth.h"
+#include "account.h"
 
 #define LOG_GET_USER "[pam_simple] Username: "
 #define LOG_GET_TOKEN "[pam_simple] Password: "
@@ -52,25 +54,6 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *handle, int flags, int argc, co
     }
 
     return PAM_PERM_DENIED;
-}
-
-bool is_user_banned(const char *username, int argc, const char **argv) {
-    struct acct_argv *parsed_argv = parse_acct_argv(argc, argv);
-    FILE *permsfile = fopen(parsed_argv->permissions_filename, "r");
-
-    if (permsfile == NULL) {
-        log_err("could not open permissions file");
-        return false;
-    }
-
-    char *curr_line = NULL;
-    while (fscanf(permsfile, "%s", curr_line) > 0) {
-        if (strcmp(curr_line, username) == 0)
-            return true;
-    }
-
-    fclose(permsfile);
-    return false;
 }
 
 PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *handle, int flags, int argc, const char **argv) {
