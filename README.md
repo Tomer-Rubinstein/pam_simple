@@ -8,8 +8,8 @@ The module also supports user banning.
 
 Auth Management Group:
 - [x] implement parser for ``/etc/shadow`` to extract information such as: username, hash algo, salt, etc. (using ``<shadow.h>``)
-- [ ] implement SHA-512 w.r.t salt
-- [ ] implement ``pam_sm_authenticate`` (using the above necessities)
+- [x] implement shadow file hashing algorithms w.r.t salt
+- [x] implement ``pam_sm_authenticate`` (using the above necessities)
 
 Account Management Group:
 - [ ] get path to banned users file from PAM config file and check for existence of ``username`` (hence banned)
